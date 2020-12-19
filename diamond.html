@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sunset Diamond</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+		<script>
+
+			// Perspective is one of a few cameras
+			// FOV - first param is in degrees
+			var camera = new THREE.PerspectiveCamera( 
+                70, window.innerWidth / window.innerHeight, 1, 2000 );
+            camera.position.z = 1000;
+
+            // set up the scene
+            var scene = new THREE.Scene();
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			var octahedron_geometry =	new THREE.OctahedronBufferGeometry( 400, 0 );
+            var octahedron_edges = new THREE.EdgesGeometry( octahedron_geometry );
+			// octahedron - Mercury
+            var octahedron_material = new THREE.MeshStandardMaterial(
+                {transparent: true, opacity: 0.5, color: 0x80ffc0});
+			var octahedron = new THREE.Mesh( octahedron_geometry, octahedron_material );
+			
+            var octahedron_line_material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+            var octahedron_line = new THREE.LineSegments( octahedron_edges, octahedron_line_material);
+
+			scene.add( octahedron );
+            scene.add( octahedron_line );
+			
+			function animate() {
+                requestAnimationFrame( animate );
+                // small rotation to the shapes & edges
+				octahedron.rotation.x += 0.003;
+				octahedron.rotation.y += 0.003;
+                octahedron_line.rotation.x += 0.003;
+				octahedron_line.rotation.y += 0.003;
+				render();
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+            light = new THREE.AmbientLight( {color: 0x404040, intensity: 1.5} );
+            scene.add(light);
+            scene.background = new THREE.Color( 0x212529 );
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			function render() {
+				renderer.render( scene, camera );
+			}
+			animate();
+		</script>
+	</body>
+</html>
